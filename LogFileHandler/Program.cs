@@ -8,7 +8,8 @@ namespace LogFileHandlerApp
     {
         string defaultPath = @"C:\Users\dhkim\Desktop\TestFolder\";
         
-        private const long MaxLogFileSize = 10 * 1024 * 1024; // 10MB
+        // private const long MaxLogFileSize = 10 * 1024 * 1024; // 10MB
+        private const long MaxLogFileSize = 3 * 1024; // 3KB
 
         public void WriteLog(int partition, long offset, string data, DateTime dataTransferTime)
         {
@@ -73,30 +74,35 @@ namespace LogFileHandlerApp
     {
         static void Main(string[] args)
         {
-            int partition = 0;
-            long initialOffset = 15;
 
             LogFileHandler logFileHandler = new LogFileHandler();
+            int partition = 0;
 
-            // Test data
-            string[] testData = new string[]
+            long initialOffset = 0;
+            do
             {
-                "First log entry",
-                "Second log entry",
-                "Third log entry",
-                "Fourth log entry",
-                "Fifth log entry"
-            };
+                // Test data
+                string[] testData = new string[]
+                {
+                    "First log entry",
+                    "Second log entry",
+                    "Third log entry",
+                    "Fourth log entry",
+                    "Fifth log entry"
+                };
 
-            // Writing test data to log files
-            for (int i = 0; i < testData.Length; i++)
-            {
-                logFileHandler.WriteLog(partition, initialOffset + i, testData[i], DateTime.Now);
-                Console.WriteLine($"Written: Offset = {initialOffset + i}, Data = {testData[i]}");
-            }
+                // Writing test data to log files
+                for (int i = 0; i < testData.Length; i++)
+                {
+                    logFileHandler.WriteLog(partition, initialOffset + i, testData[i], DateTime.Now);
+                    Console.WriteLine($"Written: Offset = {initialOffset + i}, Data = {testData[i]}");
+                }
 
-            // Verify the logs and offset files
-            VerifyLogFiles(partition);
+                // Verify the logs and offset files
+                VerifyLogFiles(partition);
+
+                initialOffset += 5;
+            } while (initialOffset < 1000000);
         }
 
         private static void VerifyLogFiles(int partition)
@@ -124,6 +130,5 @@ namespace LogFileHandlerApp
             }
         }
     }
-
 
 }
